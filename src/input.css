@@ -1,8 +1,7 @@
-/* source(none) はソース自動検出を止める。放置すると Tailwind は
-   追跡中の全ファイルをスキャンし、.workflow の YAML に "diff" の語が
-   あるだけで DaisyUI の .diff を引き込み、コミット済み CSS が
-   リポジトリ内容の関数になってしまう。サイトが持つ唯一のソースを
-   名指しする。 */
+/* source(none) でソース自動検出を止める。放置すると Tailwind が
+   追跡中の全ファイルをスキャンし、YAML 内の "diff" の語から DaisyUI
+   の .diff を引き込むなどして、コミット済み CSS がリポジトリ内容の
+   関数になってしまう。サイトが持つ唯一のソースを名指しする。 */
 @import "tailwindcss" source(none);
 @source "../index.html";
 @plugin "daisyui";

@@ -1,9 +1,6 @@
-# VRT のスクリーンショットが何で描画されるかと、ベースラインを
-# 何が更新するかを定める場所。y047aka/elm-motorsport-analysis の
-# nix/vrt.nix からの移植で、スクリーンショットに関わるコマンドは
-# flake.nix ではなくここにある、という原則はそのまま。
-# 参照元の Elm ツールチェーンと CI のベースライン更新ランナーは
-# 本サイトに相当物がないため移植していない。
+# VRT のスクリーンショットが何で描画されるかを定める場所。
+# スクリーンショットに関わるコマンドは flake.nix ではなくここにある。
+# y047aka/elm-motorsport-analysis の nix/vrt.nix からの移植。
 { pkgs }:
 
 let
@@ -11,10 +8,9 @@ let
 
 in
 rec {
-  # フォントはホスト任せにせず名指しする。そのマシンにあるフォント
-  # で描画されたベースラインは、そのマシンでしか再現できないものになる。
-  # ipafont がページ中の日本語を、freefont と wqy が latin と
-  # CJK のフォールバックを担う。
+  # フォントはホスト任せにせず名指しする。マシンにあるフォントでの
+  # 描画は、そのマシンでしか再現できないベースラインになる。
+  # ipafont が日本語、freefont と wqy が latin / CJK フォールバック。
   env = {
     FONTCONFIG_FILE = pkgs.makeFontsConf {
       fontDirectories = with pkgs; [ ipafont freefont_ttf wqy_zenhei ];
@@ -27,8 +23,7 @@ rec {
     PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
   };
 
-  # python3 は config の webServer が作業コピーを配信する静的サーバ。
-  # サイトとそのファイルの間にバウンダーは介在しない。
+  # python3 は webServer が作業コピーを配信する静的サーバ。
   mkApp = name: cmd:
     pkgs.writeShellApplication {
       inherit name;

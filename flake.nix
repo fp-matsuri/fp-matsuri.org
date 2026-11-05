@@ -9,10 +9,8 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        # Node と pnpm のツールチェーンを運ぶランナー
-        # (y047aka/elm-motorsport-analysis の流儀)。本リポジトリは
-        # ルートに単一の npm プロジェクトがあるだけなので、コマンドに
-        # `cd` は不要で、ただ pnpm スクリプトへディスパッチする。
+        # Node と pnpm を運ぶランナー。npm プロジェクトはルートに
+        # 一つだけなので、コマンドはただ pnpm スクリプトへ渡る。
         mkNodeApp = name: cmd:
           pkgs.writeShellApplication {
             inherit name;

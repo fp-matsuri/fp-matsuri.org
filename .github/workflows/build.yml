@@ -1,15 +1,13 @@
 name: Build
 
-# y047aka/elm-motorsport-analysis の test.yml からの移植で、この静的
-# サイトに持つ唯一の検査に削っている: GitHub Pages が配る CSS は
-# コミット済みの assets/css/app.css だから、再生成した Tailwind ビルドは
-# それをバイト単位で再現できなければならない。参照元の VRT/Tauri/
-# スナップショット系ワークフローは本サイトに相当物がないため未移植。
+# y047aka/elm-motorsport-analysis の test.yml からの移植。
+# GitHub Pages が配る CSS はコミット済みの assets/css/app.css だから、
+# 再生成ビルドはそれをバイト単位で再現できなければならない。
 
 on:
-  # ブランチ名は絞らない (tags は除く)。このサイトはページ生成物を持たない
-  # 静的ファイルの集まりで、失敗のコストは低い。一方 byte fence をどの
-  # ブランチでも先に壊しておきたいので、任意ブランチへの push で走らせる。
+  # ブランチ名は絞らない (tags は除く)。静的ファイルの集まりで
+  # 失敗のコストは低く、byte fence の故障はどのブランチでも
+  # 早く知りたいので、任意ブランチへの push で走らせる。
   push:
     branches: ['**']
   pull_request:
@@ -36,8 +34,7 @@ jobs:
         run: nix develop --command pnpm audit --audit-level=high
       - name: Build Tailwind CSS
         run: nix run .#build
-      # バイトフェンス: 古くなったコミット済み CSS は、誰も意図して
-      # ビルドしていないスタイルを配るサイト。だから検査るのはビルド
-      # ではなく差分。
+      # バイトフェンス: 古いコミット済み CSS は、誰も意図してビルド
+      # していないスタイルを配るサイト。検査るのはビルドでなく差分。
       - name: The committed CSS is the fresh build
         run: git diff --exit-code assets/css/app.css
