@@ -15,10 +15,14 @@ jobs:
   build:
     timeout-minutes: 30
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v6
-      - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: nix-community/cache-nix-action@v7
+      # アクションはタグでなくコミット SHA に固定する。タグは書き換え /
+      # リタグ可能で、Actions 自体が供給経路になるため (SHA は対応するタグの先頭)。
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: DeterminateSystems/nix-installer-action@e50d5f73bfe71c2dd0aa4218de8f4afa59f8f81d # v16
+      - uses: nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569 # v7
         with:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-prefixes-first-match: nix-${{ runner.os }}-
