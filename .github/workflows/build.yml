@@ -7,8 +7,11 @@ name: Build
 # here and were not ported.
 
 on:
+  # ブランチ名は絞らない (tags は除く)。このサイトはページ生成物を持たない
+  # 静的ファイルの集まりで、失敗のコストは低い。一方 byte fence をどの
+  # ブランチでも先に壊しておきたいので、任意ブランチへの push で走らせる。
   push:
-    branches: [main, 2026-10]
+    branches: ['**']
   pull_request:
 
 jobs:
