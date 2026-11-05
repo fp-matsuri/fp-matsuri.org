@@ -43,6 +43,20 @@ nix/vrt.nix           VRT の描画環境 (Chromium とフォントの固定)
 flake.nix             開発環境とコマンドの宣言
 ```
 
+## 依存とサプライチェーン (pnpm)
+
+`pnpm-workspace.yaml` が三つを決める:
+
+- `allowBuilds` — postinstall 等のビルドスクリプトは承認制。
+  承認済みは `@parcel/watcher: false` のみ (Tailwind CLI のビルドに
+  不要なので何も走らせない)。`strictDepBuilds` により、未承認の
+  スクリプトは警告でなく install 失敗になる
+- `blockExoticSubdeps` — 依存解決時の git/URL 取得を禁止し、
+  ロック破り経由の仕込みを断つ
+
+`packageManager` が pnpm 本体のバージョンを、`flake.lock` がその
+pnpm を配る nixpkgs を固定する。
+
 ## CSS の流儀
 
 Tailwind v4 + DaisyUI 5 を Tailwind CLI でビルドし、成果物をコミットする
@@ -60,11 +74,26 @@ Playwright + Chromium (単一プロジェクト、1440×900、fullPage)。ブラ
 nixpkgs の playwright-driver、フォントは `FONTCONFIG_FILE` で ipafont ほか
 を名指しし、マシン依存を切る。基準は Linux のレンダリングで、CI では
 差分 0 ピクセル、ローカルでは `tests/screenshot.css` のグレースケール
-アンチエイリアスで小幅の許容。現在のベースラインは macOS で生成した
-初回版なので、CI で VRT を回す段階では Linux で打ち直しになる。
+アンチエイリアスで小幅の許容。ベースラインはプラットフォーム名の
+ない 1 枚きりで、描画環境は名前でなくフォント固定が担う。現在の
+ベースラインは macOS で生成した初回版なので、CI で VRT を回す段階では
+Linux で打ち直しになる。
 
 ## CI
 
 GitHub Actions (`.github/workflows/build.yml`) が PR と任意ブランチの
 push で走る: 依存の脆弱性監査 (`pnpm audit`、high のみ失敗) →
 CSS 再生成 → byte fence。
+
+ブランチ名は絞らない (tags は除く)。静的ファイルの集まりで失敗の
+コストは低く、byte fence の故障はどのブランチでも早く知りたいから。
+ジョブの権限は `contents: read`、要求するのはチェックアウトだけだ。
+
+## 由来
+
+開発環境と CI の多くは y047aka/elm-motorsport-analysis の移植:
+flake の流儀 (writeShellApplication ランナー・devShell)、
+`nix/vrt.nix`、`tests/screenshot.css`、CI ワークフローの骨格
+(テスト用だったものを byte fence に削った)。
+Elm/Flix/Tauri 系と CI のベースライン自動更新ランナーは
+本サイトに相当物がないため未移植。
