@@ -1,6 +1,7 @@
 {
   "name": "fp-matsuri.org",
   "private": true,
+  "packageManager": "pnpm@11.11.0",
   "scripts": {
     "build": "tailwindcss -i src/input.css -o assets/css/app.css --minify",
     "watch": "tailwindcss -i src/input.css -o assets/css/app.css --watch"
