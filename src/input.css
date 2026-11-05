@@ -1,2 +1,7 @@
-@import "tailwindcss";
+/* source(none) turns off auto-detection: without it Tailwind scans every
+   tracked file — a workflow YAML that merely says "diff" pulls in the
+   daisyUI .diff component, and the committed CSS stops being a function
+   of the page. The one source the site has is named outright. */
+@import "tailwindcss" source(none);
+@source "../index.html";
 @plugin "daisyui";
