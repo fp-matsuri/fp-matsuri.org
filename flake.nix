@@ -9,8 +9,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        # Node と pnpm を運ぶランナー。npm プロジェクトはルートに
-        # 一つだけなので、コマンドはただ pnpm スクリプトへ渡る。
+        # Node と pnpm を運ぶランナー。
         mkNodeApp = name: cmd:
           pkgs.writeShellApplication {
             inherit name;
@@ -18,8 +17,6 @@
             text = cmd;
           };
 
-        # VRT のランナーと、それが描画に使うフォント・ブラウザ。
-        # nix/vrt.nix を参照。
         vrt = import ./nix/vrt.nix { inherit pkgs; };
       in {
         devShells.default = pkgs.mkShell (vrt.env // {

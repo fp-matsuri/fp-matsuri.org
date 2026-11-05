@@ -1,13 +1,7 @@
 name: Build
 
-# y047aka/elm-motorsport-analysis の test.yml からの移植。
-# GitHub Pages が配る CSS はコミット済みの assets/css/app.css だから、
-# 再生成ビルドはそれをバイト単位で再現できなければならない。
-
 on:
-  # ブランチ名は絞らない (tags は除く)。静的ファイルの集まりで
-  # 失敗のコストは低く、byte fence の故障はどのブランチでも
-  # 早く知りたいので、任意ブランチへの push で走らせる。
+  # ブランチ名は絞らない。tags は除きたいので branches: ['**'] を明示。
   push:
     branches: ['**']
   pull_request:
@@ -16,8 +10,6 @@ jobs:
   build:
     timeout-minutes: 30
     runs-on: ubuntu-24.04
-    # このワークフローが要求し読むのはチェックアウトだけ。既定の書き込み
-    # 権限を持たせない。
     permissions:
       contents: read
     steps:
@@ -29,12 +21,9 @@ jobs:
           restore-prefixes-first-match: nix-${{ runner.os }}-
       - name: Install dependencies
         run: nix run .#install
-      # 既知 CVE の監査。PR を止めるのは high 以上に絞って運用負荷を下げる。
       - name: Audit dependencies
         run: nix develop --command pnpm audit --audit-level=high
       - name: Build Tailwind CSS
         run: nix run .#build
-      # バイトフェンス: 古いコミット済み CSS は、誰も意図してビルド
-      # していないスタイルを配るサイト。検査るのはビルドでなく差分。
       - name: The committed CSS is the fresh build
         run: git diff --exit-code assets/css/app.css

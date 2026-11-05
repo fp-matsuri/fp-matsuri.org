@@ -1,6 +1,3 @@
-# VRT のスクリーンショットが何で描画されるかを定める場所。
-# スクリーンショットに関わるコマンドは flake.nix ではなくここにある。
-# y047aka/elm-motorsport-analysis の nix/vrt.nix からの移植。
 { pkgs }:
 
 let
@@ -8,9 +5,6 @@ let
 
 in
 rec {
-  # フォントはホスト任せにせず名指しする。マシンにあるフォントでの
-  # 描画は、そのマシンでしか再現できないベースラインになる。
-  # ipafont が日本語、freefont と wqy が latin / CJK フォールバック。
   env = {
     FONTCONFIG_FILE = pkgs.makeFontsConf {
       fontDirectories = with pkgs; [ ipafont freefont_ttf wqy_zenhei ];
@@ -23,7 +17,6 @@ rec {
     PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
   };
 
-  # python3 は webServer が作業コピーを配信する静的サーバ。
   mkApp = name: cmd:
     pkgs.writeShellApplication {
       inherit name;
