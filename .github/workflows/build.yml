@@ -1,10 +1,10 @@
 name: Build
 
-# Ported from y047aka/elm-motorsport-analysis's test.yml, pared to the one
-# check this static site has: the CSS GitHub Pages serves is the committed
-# assets/css/app.css, so a fresh Tailwind build must reproduce it byte for
-# byte. The VRT/Tauri/snapshot workflows of the reference have no analogue
-# here and were not ported.
+# y047aka/elm-motorsport-analysis の test.yml からの移植で、この静的
+# サイトに持つ唯一の検査に削っている: GitHub Pages が配る CSS は
+# コミット済みの assets/css/app.css だから、再生成した Tailwind ビルドは
+# それをバイト単位で再現できなければならない。参照元の VRT/Tauri/
+# スナップショット系ワークフローは本サイトに相当物がないため未移植。
 
 on:
   # ブランチ名は絞らない (tags は除く)。このサイトはページ生成物を持たない
@@ -36,7 +36,8 @@ jobs:
         run: nix develop --command pnpm audit --audit-level=high
       - name: Build Tailwind CSS
         run: nix run .#build
-      # The byte fence: a stale committed CSS is a site that ships styles
-      # nobody built on purpose, so the diff, not the build, is the check.
+      # バイトフェンス: 古くなったコミット済み CSS は、誰も意図して
+      # ビルドしていないスタイルを配るサイト。だから検査るのはビルド
+      # ではなく差分。
       - name: The committed CSS is the fresh build
         run: git diff --exit-code assets/css/app.css

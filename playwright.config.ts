@@ -2,8 +2,8 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-  // One baseline per shot, not one per platform: the platform a shot was
-  // rendered on is what the fonts are pinned for, not part of its name.
+  // ショット1枚につきベースライン1つ、プラットフォーム別ではない。
+  // 描画環境はフォントの固定で制御するものであり、名前の一部ではない。
   snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -15,16 +15,17 @@ export default defineConfig({
     baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
     launchOptions: {
-      // Playwright already launches Chromium with `--no-sandbox`, unless
-      // `chromiumSandbox: true` asks it not to.
+      // Playwright は既定で `--no-sandbox` 付きの Chromium を起動する
+      // (`chromiumSandbox: true` を明示しない限り)。
       args: ['--font-render-hinting=none', '--disable-lcd-text'],
     },
   },
 
   expect: {
     toHaveScreenshot: {
-      // Greyscale antialiasing, so a local run compares against CI's Linux
-      // baselines with room to spare. See tests/screenshot.css.
+      // グレースケールのアンチエイリアスで、ローカル実行が CI の Linux
+      // ベースラインと余裕を持って突き合わせられるようにする。
+      // tests/screenshot.css を参照。
       stylePath: './tests/screenshot.css',
       ...(process.env.CI
         ? { maxDiffPixels: 0 }
@@ -39,8 +40,8 @@ export default defineConfig({
     },
   ],
 
-  // The site is the working copy: index.html and assets/css beside it.
-  // python3 arrives through the flake's runner (nix/vrt.nix).
+  // 配信するのは作業コピーそのもの: index.html と assets/css をそのまま。
+  // python3 は flake のランナーが運ぶ (nix/vrt.nix)。
   webServer: {
     command: 'python3 -m http.server 4173',
     port: 4173,

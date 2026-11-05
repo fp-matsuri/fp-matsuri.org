@@ -1,7 +1,8 @@
-/* source(none) turns off auto-detection: without it Tailwind scans every
-   tracked file — a workflow YAML that merely says "diff" pulls in the
-   daisyUI .diff component, and the committed CSS stops being a function
-   of the page. The one source the site has is named outright. */
+/* source(none) はソース自動検出を止める。放置すると Tailwind は
+   追跡中の全ファイルをスキャンし、.workflow の YAML に "diff" の語が
+   あるだけで DaisyUI の .diff を引き込み、コミット済み CSS が
+   リポジトリ内容の関数になってしまう。サイトが持つ唯一のソースを
+   名指しする。 */
 @import "tailwindcss" source(none);
 @source "../index.html";
 @plugin "daisyui";

@@ -9,10 +9,10 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        # A runner carrying the Node and pnpm toolchain, in the style of
-        # y047aka/elm-motorsport-analysis. This site is a single npm project
-        # at the repository root, so the commands need no `cd` and simply
-        # dispatch to the pnpm scripts.
+        # Node と pnpm のツールチェーンを運ぶランナー
+        # (y047aka/elm-motorsport-analysis の流儀)。本リポジトリは
+        # ルートに単一の npm プロジェクトがあるだけなので、コマンドに
+        # `cd` は不要で、ただ pnpm スクリプトへディスパッチする。
         mkNodeApp = name: cmd:
           pkgs.writeShellApplication {
             inherit name;
@@ -20,8 +20,8 @@
             text = cmd;
           };
 
-        # The screenshot runners and the fonts and browsers they render
-        # against. See nix/vrt.nix.
+        # VRT のランナーと、それが描画に使うフォント・ブラウザ。
+        # nix/vrt.nix を参照。
         vrt = import ./nix/vrt.nix { inherit pkgs; };
       in {
         devShells.default = pkgs.mkShell (vrt.env // {

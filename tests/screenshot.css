@@ -1,12 +1,13 @@
-/* Injected while a screenshot is taken, never into the site itself: how the
-   VRT reads text is a test's concern and what a mac user sees is not.
+/* スクリーンショット撮影中にだけ注入され、サイト本体には決して入れない。
+   VRT が文字をどう読むかはテスト側の事情で、mac ユーザーの見た目とは無関係。
 
-   macOS rasterises glyphs through CoreText and Linux through FreeType, and
-   the baselines are Linux's, so a local run always compares across that.
-   Greyscale antialiasing is where the two are closest. Blink honours the
-   property on macOS alone, so this does nothing to what CI renders.
+   macOS はグリフを CoreText で、Linux は FreeType でラスタライズし、
+   ベースラインは Linux のものだから、ローカル実行は必ずその差を越えて
+   比較することになる。グレースケールのアンチエイリアスがその二つが最も
+   近い地点。Blink はこのプロパティを macOS でのみ尊重するので、CI の
+   描画には何の影響もない。
 
-   Ported from y047aka/elm-motorsport-analysis's tests/screenshot.css. */
+   y047aka/elm-motorsport-analysis の tests/screenshot.css から移植。 */
 * {
   -webkit-font-smoothing: antialiased;
 }

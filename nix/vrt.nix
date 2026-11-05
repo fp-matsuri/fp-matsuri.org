@@ -1,8 +1,9 @@
-# What the visual regression tests render with, and what refreshes their
-# baselines. Ported from y047aka/elm-motorsport-analysis's nix/vrt.nix: a
-# command belongs here rather than in flake.nix when it is about a
-# screenshot. The Elm toolchain and the CI snapshot-refresh runner of the
-# reference have no analogue here and were not ported.
+# VRT のスクリーンショットが何で描画されるかと、ベースラインを
+# 何が更新するかを定める場所。y047aka/elm-motorsport-analysis の
+# nix/vrt.nix からの移植で、スクリーンショットに関わるコマンドは
+# flake.nix ではなくここにある、という原則はそのまま。
+# 参照元の Elm ツールチェーンと CI のベースライン更新ランナーは
+# 本サイトに相当物がないため移植していない。
 { pkgs }:
 
 let
@@ -10,10 +11,10 @@ let
 
 in
 rec {
-  # The fonts are named rather than left to the host: a baseline rendered
-  # against whichever fonts a machine happens to have is one only that
-  # machine can reproduce. ipafont carries the Japanese the page holds,
-  # freefont and wqy the latin and CJK fallbacks.
+  # フォントはホスト任せにせず名指しする。そのマシンにあるフォント
+  # で描画されたベースラインは、そのマシンでしか再現できないものになる。
+  # ipafont がページ中の日本語を、freefont と wqy が latin と
+  # CJK のフォールバックを担う。
   env = {
     FONTCONFIG_FILE = pkgs.makeFontsConf {
       fontDirectories = with pkgs; [ ipafont freefont_ttf wqy_zenhei ];
@@ -26,8 +27,8 @@ rec {
     PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
   };
 
-  # python3 is the static server the config's webServer runs over the
-  # working copy; no bundler stands between this site and its files.
+  # python3 は config の webServer が作業コピーを配信する静的サーバ。
+  # サイトとそのファイルの間にバウンダーは介在しない。
   mkApp = name: cmd:
     pkgs.writeShellApplication {
       inherit name;
@@ -38,7 +39,7 @@ rec {
         export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=${env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD}
         export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=${env.PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS}
 
-        # Symlink @playwright/test into node_modules for ESM resolution
+        # ESM 解決のため @playwright/test を node_modules へ symlink する
         mkdir -p node_modules/@playwright
         ln -sfn ${playwrightModules}/@playwright/test node_modules/@playwright/test
 
