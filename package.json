@@ -1,0 +1,13 @@
+{
+  "name": "fp-matsuri.org",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i src/input.css -o assets/css/app.css --minify",
+    "watch": "tailwindcss -i src/input.css -o assets/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "daisyui": "^5.0.0",
+    "tailwindcss": "^4.0.0"
+  }
+}
