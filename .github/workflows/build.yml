@@ -24,6 +24,9 @@ jobs:
           restore-prefixes-first-match: nix-${{ runner.os }}-
       - name: Install dependencies
         run: nix run .#install
+      # 既知 CVE の監査。PR を止めるのは high 以上に絞って運用負荷を下げる。
+      - name: Audit dependencies
+        run: nix develop --command pnpm audit --audit-level=high
       - name: Build Tailwind CSS
         run: nix run .#build
       # The byte fence: a stale committed CSS is a site that ships styles
