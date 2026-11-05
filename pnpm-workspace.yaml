@@ -1,2 +1,8 @@
 allowBuilds:
   '@parcel/watcher': false
+# 依存解決時の git/URL 取得を禁止し、ロック破り経由の仕込みを断つ
+blockExoticSubdeps: true
+# 未承認の postinstall を警告でなく install 失敗にする。
+# 承認済みは上の allowBuilds のみ (Tailwind CLI のビルドに不要な
+# @parcel/watcher は不許可で確定済みなので通常運用では何も走らない)。
+strictDepBuilds: true
