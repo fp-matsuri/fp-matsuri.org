@@ -1,0 +1,32 @@
+name: Build
+
+# Ported from y047aka/elm-motorsport-analysis's test.yml, pared to the one
+# check this static site has: the CSS GitHub Pages serves is the committed
+# assets/css/app.css, so a fresh Tailwind build must reproduce it byte for
+# byte. The VRT/Tauri/snapshot workflows of the reference have no analogue
+# here and were not ported.
+
+on:
+  push:
+    branches: [main, 2026-10]
+  pull_request:
+
+jobs:
+  build:
+    timeout-minutes: 30
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+      - name: Install dependencies
+        run: nix run .#install
+      - name: Build Tailwind CSS
+        run: nix run .#build
+      # The byte fence: a stale committed CSS is a site that ships styles
+      # nobody built on purpose, so the diff, not the build, is the check.
+      - name: The committed CSS is the fresh build
+        run: git diff --exit-code assets/css/app.css
