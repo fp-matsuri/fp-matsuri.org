@@ -1,18 +1,13 @@
 name: VRT
 
-# y047aka/elm-motorsport-analysis の playwright.yml からの移植。
-# PR に対してのみ走らせる。このリポジトリでは push と pull_request の
-# 両方にワークフローを置くと同一コミットで 2 本走る (build.yml が既に
-# その形) が、コメンドの書き込み権限を持つこのチェックは PR だけで
-# 十分なので push を外している。
-#
-# workflow_dispatch を併記するのは、Update VRT Snapshots がbot 名義で
-# ベースラインを push したあとに GitHub が workflow の自動実行を抑止する
-# ため。打ち直したベースラインを HEAD として走らせる入口が要る。
-
 on:
+  # 実績ある形に絞る: main への push と、main への PR のみ。
+  # ブランチへの push では走らない (PR 時にマージコミット込みの
+  # 実態をみたいので PR 側で十分)。fork の PR もここでカバーする。
+  push:
+    branches: [main]
   pull_request:
-  workflow_dispatch:
+    branches: [main]
 
 jobs:
   vrt:
