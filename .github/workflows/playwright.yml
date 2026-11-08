@@ -1,9 +1,6 @@
 name: VRT
 
 on:
-  # 実績ある形に絞る: main への push と、main への PR のみ。
-  # ブランチへの push では走らない (PR 時にマージコミット込みの
-  # 実態をみたいので PR 側で十分)。fork の PR もここでカバーする。
   push:
     branches: [main]
   pull_request:
@@ -44,5 +41,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `## VRT 失敗\n意図した変更なら Update VRT Snapshots ワークフローをこのブランチで dispatch してベースラインを打ち直してください。\nレポート: ${url}`
+              body: `## Playwright 失敗\nレポート: ${url}`
             });

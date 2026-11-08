@@ -1,12 +1,5 @@
 name: Update VRT Snapshots
 
-# Dispatch on the branch whose snapshots you want updated: the run reads
-# that branch and pushes back onto it. Ported from
-# y047aka/elm-motorsport-analysis's update-snapshots.yml, with the reference's
-# local helper (nix/update-snapshots-ci.sh, which dispatches from a terminal
-# and then approves the bot's held runs) left out: from a terminal, run
-# `gh workflow run update-snapshots.yml --ref <branch>` directly.
-
 on:
   workflow_dispatch:
 
@@ -41,7 +34,7 @@ jobs:
             echo "Snapshots are already current; nothing to push."
             exit 0
           fi
-          git commit -m "test: VRT ベースラインを Linux レンダリングで更新 [skip ci]"
+          git commit -m "chore: update VRT snapshots"
           git push origin HEAD:"$BRANCH"
       - uses: actions/upload-artifact@v7
         with:
