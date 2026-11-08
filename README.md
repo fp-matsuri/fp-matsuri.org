@@ -54,7 +54,8 @@ CI が再生成ビルドとコミット済み CSS のバイト一致を検査す
 Playwright + Chromium (単一プロジェクト、1440×900、fullPage)。
 ブラウザはnixpkgs の playwright-driver、フォントは `FONTCONFIG_FILE` で ipafont ほかを名指しし、マシン依存を切る。基準は Linux のレンダリングで、CI では差分 0 ピクセル、ローカルでは `tests/screenshot.css` のグレースケール アンチエイリアスで小幅の許容。
 ベースラインはプラットフォーム名のない 1 枚きりで、描画環境は名前でなくフォント固定が担う。
-現在のベースラインは macOS で生成した初回版なので、CI で VRT を回す段階では Linux で打ち直しになる。
+意図した変更で差分が出たら、ブランチに `Update VRT Snapshots` を dispatch して
+Linux ランナーで打ち直す (bot が同じブランチへ push する)。
 
 ## CI
 
