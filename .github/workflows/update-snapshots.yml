@@ -1,0 +1,43 @@
+name: Update VRT Snapshots
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-snapshots:
+    timeout-minutes: 60
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Refuse to run on main
+        if: github.ref_name == 'main'
+        run: |
+          echo "::error::Dispatch this on the branch whose snapshots you want updated, not main."
+          exit 1
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+      - name: Update snapshots on Linux
+        run: nix run .#update-snapshots-vrt
+      - name: Push updated snapshots
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 'tests/*.spec.ts-snapshots/*'
+          if git diff --cached --quiet; then
+            echo "Snapshots are already current; nothing to push."
+            exit 0
+          fi
+          git commit -m "chore: update VRT snapshots"
+          git push origin HEAD:"$BRANCH"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: updated-snapshots
+          path: tests/*.spec.ts-snapshots/
+          retention-days: 30

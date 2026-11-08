@@ -1,0 +1,4 @@
+allowBuilds:
+  '@parcel/watcher': false
+blockExoticSubdeps: true
+strictDepBuilds: true

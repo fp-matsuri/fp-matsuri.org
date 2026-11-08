@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches: ['**']
+
+jobs:
+  build:
+    concurrency:
+      group: build-${{ github.ref }}
+      cancel-in-progress: true
+    timeout-minutes: 30
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+      - name: Install dependencies
+        run: nix run .#install
+      - name: Audit dependencies
+        run: nix develop --command pnpm audit --audit-level=high
+      - name: Build Tailwind CSS
+        run: nix run .#build
+      - name: The committed CSS is the fresh build
+        run: git diff --exit-code assets/css/app.css
