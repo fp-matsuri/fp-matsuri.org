@@ -9,7 +9,6 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        # Node と pnpm を運ぶランナー。
         mkNodeApp = name: cmd:
           pkgs.writeShellApplication {
             inherit name;

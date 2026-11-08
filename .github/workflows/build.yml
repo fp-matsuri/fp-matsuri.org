@@ -1,7 +1,6 @@
 name: Build
 
 on:
-  # ブランチ名は絞らない。tags は除きたいので branches: ['**'] を明示。
   push:
     branches: ['**']
   pull_request:
