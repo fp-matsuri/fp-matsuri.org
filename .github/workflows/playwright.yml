@@ -1,0 +1,53 @@
+name: VRT
+
+# y047aka/elm-motorsport-analysis の playwright.yml からの移植。
+# PR に対してのみ走らせる。このリポジトリでは push と pull_request の
+# 両方にワークフローを置くと同一コミットで 2 本走る (build.yml が既に
+# その形) が、コメンドの書き込み権限を持つこのチェックは PR だけで
+# 十分なので push を外している。
+#
+# workflow_dispatch を併記するのは、Update VRT Snapshots がbot 名義で
+# ベースラインを push したあとに GitHub が workflow の自動実行を抑止する
+# ため。打ち直したベースラインを HEAD として走らせる入口が要る。
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  vrt:
+    timeout-minutes: 30
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: vrt-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+      - name: Run VRT against the committed baselines
+        run: nix run .#test-vrt
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      - name: Comment PR on failure
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const url = `https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## VRT 失敗\n意図した変更なら Update VRT Snapshots ワークフローをこのブランチで dispatch してベースラインを打ち直してください。\nレポート: ${url}`
+            });
